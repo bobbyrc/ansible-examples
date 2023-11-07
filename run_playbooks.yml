@@ -1,0 +1,11 @@
+---
+- name: Update packages
+  import_playbook: ./playbooks/update_packages.yml
+- name: Install qemu agent
+  import_playbook: ./playbooks/install_qemu_guest_agent.yml
+- name: Install docker
+  import_playbook: ./playbooks/install_docker.yml
+- name: Install NFS
+  import_playbook: ./playbooks/install_nfs.yml
+- name: Install keepalived
+  import_playbook: ./playbooks/install_keepalived.yml

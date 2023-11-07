@@ -1,0 +1,8 @@
+[proxmox_ubuntu]
+sequoia.local.bcraig.io
+walnut.local.bcraig.io
+
+[ubuntu]
+ash.local.bcraig.io
+padauk.local.bcraig.io
+wenge.local.bcraig.io

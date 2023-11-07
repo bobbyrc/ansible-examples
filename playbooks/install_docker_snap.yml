@@ -1,0 +1,57 @@
+- name: Install Docker Snap
+  hosts: all
+  become: true
+
+  tasks:
+    # install docker via snap
+    - name: Install docker
+      community.general.snap:
+        name: docker
+
+    # this step is to prevent needing to use sudo when running docker commands
+    - name: Create docker group
+      ansible.builtin.group:
+        name: docker
+        state: present
+        system: true
+    - name: Add user to docker group
+      ansible.builtin.user:
+        name: "{{ lookup('env', 'USER') }}"
+        groups: docker
+        append: true
+    - name: Reset ssh connection to allow user changes to affect ansible user
+      ansible.builtin.meta:
+        reset_connection
+
+    # restart docker to apply changes to group
+    - name: Disable docker
+      community.general.snap:
+        name: docker
+        state: disabled
+    - name: Enable docker
+      community.general.snap:
+        name: docker
+        state: enabled
+
+    # this step enables the docker api so that we can manage multiple hosts in a single instance of portainer
+    - name: Enable Docker API
+      ansible.builtin.replace:
+        path: /etc/systemd/system/snap.docker.dockerd.service
+        regexp: '^ExecStart=\/usr\/bin\/dockerd'
+        replace: 'ExecStart=/usr/bin/dockerd -H=tcp://0.0.0.0:2375'
+        backup: true
+
+    # the following steps install docker compose
+    # - name: Create CLI plugins directory
+    #   become: false
+    #   file:
+    #     path: ~/.docker/cli-plugins
+    #     state: directory
+
+    # - name: Download docker compose and validate checksum (sha256)
+    #   become: false
+    #   get_url:
+    #     url: https://github.com/docker/compose/releases/download/v2.8.0/docker-compose-linux-x86_64
+    #     dest: ~/.docker/cli-plugins/docker-compose
+    #     checksum: sha256:https://github.com/docker/compose/releases/download/v2.8.0/docker-compose-linux-x86_64.sha256
+    #     mode: u+x

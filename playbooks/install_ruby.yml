@@ -1,0 +1,10 @@
+- name: Install latest ruby
+  hosts: ubuntu
+
+  tasks:
+    - name: Install ruby
+      ansible.builtin.apt:
+        name: ruby
+        state: present
+        update_cache: true
+      become: true

@@ -1,0 +1,16 @@
+- name: Install nfs utilities
+  hosts: all
+
+  tasks:
+    - name: Install nfs-kernel-server
+      ansible.builtin.apt:
+        name: nfs-kernel-server
+        state: latest
+        update_cache: true
+      become: true
+    - name: Install nfs-common
+      ansible.builtin.apt:
+        name: nfs-common
+        state: latest
+        update_cache: true
+      become: true
